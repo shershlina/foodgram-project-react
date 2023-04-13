@@ -9,6 +9,7 @@ class User(AbstractUser):
     last_name = models.CharField('Фамилия', max_length=150)
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ('email', 'first_name', 'last_name')
+    LOGIN_FIELD = 'email'
 
     groups = models.ManyToManyField(
         'auth.Group',
