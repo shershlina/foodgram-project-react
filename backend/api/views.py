@@ -22,7 +22,7 @@ class CLDMixinSet(mixins.CreateModelMixin,
 class TagViewSet(CLDMixinSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
@@ -32,11 +32,11 @@ class TagViewSet(CLDMixinSet):
 class IngredientViewSet(CLDMixinSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
-    lookup_field = 'slug'
+    lookup_field = 'name'
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
