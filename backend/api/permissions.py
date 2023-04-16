@@ -2,7 +2,6 @@ from rest_framework import permissions
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-
     message = 'Требуются права администратора!'
 
     def has_permission(self, request, view):
@@ -11,7 +10,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-
     message = 'Изменение чужого контента запрещено!'
 
     def has_object_permission(self, request, view, obj):

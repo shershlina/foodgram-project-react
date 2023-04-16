@@ -44,11 +44,11 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient,
                                          through='IngredientRecipe',
                                          related_name='recipes')
-    author = models.ForeignKey(User, on_delete=models.CASCADE,
+    author = models.ForeignKey(User, on_delete=models.SET_NULL,
                                related_name='recipes')
     name = models.CharField('Название', max_length=200)
-    image = models.ImageField('Изображение', upload_to='recipes/')
-    text = models.CharField('Описание', max_length=1000)
+    image = models.ImageField('Изображение', upload_to='recipes/images/')
+    text = models.TextField('Описание', max_length=1000)
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
         validators=[MinValueValidator(

@@ -8,9 +8,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = os.getenv('SECRET_KEY', default='H3R3-Y0UR-S3CR3T-K3Y')
 
-DEBUG = True
+DB_PROD = os.getenv('DB_PROD', default=False)
+TEST_ENVIRONMENT = os.getenv('TEST_ENVIRONMENT', default=False)
 
-ALLOWED_HOSTS = ['*']
+if TEST_ENVIRONMENT == 'True':
+    DEBUG = True
+else:
+    DEBUG = False
+
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,12 +66,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if DB_PROD == 'True':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE',
+                                default='django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME', default='db'),
+            'USER': os.getenv('POSTGRES_USER', default='postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+            'HOST': os.getenv('DB_HOST', default='db'),
+            'PORT': os.getenv('DB_PORT', default='5432')
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -82,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-Ru'
 
 TIME_ZONE = 'Asia/Novosibirsk'
 
@@ -93,7 +112,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -119,8 +138,16 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
-       'LOGIN_FIELD': 'email',
-       'SEND_ACTIVATION_EMAIL': False,
+    'LOGIN_FIELD': 'email',
+    'HIDE_USERS': False,
+    'PERMISSIONS': {
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        'user_list': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
+    },
+    'SERIALIZERS': {
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer'
+    },
    }
 
 INTERNAL_IPS = ['127.0.0.1', ]

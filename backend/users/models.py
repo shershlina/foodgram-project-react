@@ -8,11 +8,14 @@ class User(AbstractUser):
                                 unique=True)
     first_name = models.CharField('Имя', max_length=150)
     last_name = models.CharField('Фамилия', max_length=150)
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ('email', 'first_name', 'last_name')
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
     class Meta:
         ordering = ('username',)
+
+    def __str__(self):
+        return self.username
 
 
 class Follow(models.Model):
@@ -23,7 +26,6 @@ class Follow(models.Model):
     )
     author = models.ForeignKey(
         User,
-        blank=True, null=True,
         on_delete=models.CASCADE,
         related_name='following'
     )
