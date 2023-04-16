@@ -132,9 +132,8 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
     'DEFAULT_PAGINATION_CLASS': [
-        'rest_framework.pagination.LimitOffsetPagination',
+        'api.pagination.CustomPagination',
     ],
-    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
