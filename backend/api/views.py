@@ -4,7 +4,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -12,6 +11,7 @@ from recipes.models import (Favorite, Ingredient, Recipe, IngredientRecipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
 from .filters import RecipeFilter
+from .pagination import CustomPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (TagSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeWriteSerializer,
@@ -48,7 +48,7 @@ class IngredientViewSet(CLDMixinSet):
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -132,7 +132,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
-    pagination_class = LimitOffsetPagination
+    pagination_class = CustomPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
     http_method_names = ['patch', 'get', 'post', 'delete']
