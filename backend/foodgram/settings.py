@@ -9,12 +9,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', default='H3R3-Y0UR-S3CR3T-K3Y')
 
 DB_PROD = os.getenv('DB_PROD', default=False)
-TEST_ENVIRONMENT = os.getenv('TEST_ENVIRONMENT', default=False)
 
-if TEST_ENVIRONMENT == 'True':
-    DEBUG = True
-else:
-    DEBUG = False
+DEBUG = os.getenv('TEST_ENVIRONMENT', default=False) == 'True'
 
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', default='*')]
 
@@ -156,3 +152,7 @@ INTERNAL_IPS = ['127.0.0.1', ]
 CORS_URLS_REGEX = r'^/api/.*$'
 
 CORS_ALLOWED_ORIGINS = ['http://127.0.0.1:3000', ]
+
+EMAIL_LENGTH = 254
+NAME_LENGTH = 150
+CHAR_LENGTH = 200

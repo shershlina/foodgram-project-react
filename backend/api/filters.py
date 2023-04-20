@@ -1,6 +1,19 @@
+from django.db.models import Q
 from django_filters.rest_framework import filters, FilterSet
 
-from recipes.models import Recipe, Tag
+from recipes.models import Ingredient, Recipe, Tag
+
+
+class IngredientFilter(FilterSet):
+    name = filters.CharFilter(method='filter_by_name')
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
+
+    def filter_by_name(self, queryset, name, value):
+        queryset = queryset.filter(Q(name__istartswith=value))
+        return queryset
 
 
 class RecipeFilter(FilterSet):

@@ -6,15 +6,40 @@ from .models import (
 )
 
 
+class TagInLine(admin.TabularInline):
+    model = Recipe.tags.through
+    min_num = 1
+
+
+class IngredientInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
+    min_num = 1
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'author', 'added_in_favorites')
-    readonly_fields = ('added_in_favorites',)
+    list_display = ('name', 'id', 'author', 'added_in_favorites',
+                    'list_of_ingredients', 'list_of_tags')
+    readonly_fields = ('added_in_favorites', 'list_of_ingredients',
+                       'list_of_tags')
     list_filter = ('author', 'name', 'tags',)
+    inlines = (TagInLine, IngredientInLine,)
 
-    @display(description='Сколько раз добавлено в избранное')
+    @display(description='Частота в избранном')
     def added_in_favorites(self, obj):
         return obj.favorites.count()
+
+    @display(description='Ингредиенты')
+    def list_of_ingredients(self, obj):
+        return ', '.join([
+            ingredients.name for ingredients
+            in obj.ingredients.all()])
+
+    @display(description='Теги')
+    def list_of_tags(self, obj):
+        return ', '.join([
+            tags.name for tags
+            in obj.tags.all()])
 
 
 @admin.register(Ingredient)
