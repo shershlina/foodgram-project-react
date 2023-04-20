@@ -56,8 +56,8 @@ class Recipe(models.Model):
                                          through='IngredientRecipe',
                                          related_name='recipes',
                                          verbose_name='Ингредиент')
-    author = models.ForeignKey(User, on_delete=models.SET_NULL,
-                               null=True, related_name='recipes',
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='recipes',
                                verbose_name='Автор')
     name = models.CharField(verbose_name='Название',
                             max_length=settings.CHAR_LENGTH)
