@@ -45,7 +45,7 @@ const RecipeEdit = ({ onItemDelete }) => {
   useEffect(_ => {
     api.getTags()
       .then(tags => {
-        setValue(tags.map(tag => ({ ...tag, value: true })))
+        setValue(tags.map(tag => ({ ...tag, value: false })))
       })
   }, [])
 

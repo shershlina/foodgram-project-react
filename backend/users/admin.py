@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db.models import Count
 
 from .models import User
 
@@ -13,16 +12,10 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('username', )
     empty_value_display = '-пусто-'
 
+    @admin.display(description='Рецепты пользователя')
     def recipe_count(self, obj):
-        return obj._recipe_count
+        return obj.recipes.count()
 
+    @admin.display(description='Подписчики пользователя')
     def follows_count(self, obj):
-        return obj._follows_count
-
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        queryset = queryset.annotate(
-            _recipe_count=Count('recipes', distinct=True),
-            _follows_count=Count('following', distinct=True),
-        )
-        return queryset
+        return obj.following.count()

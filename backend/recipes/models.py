@@ -141,7 +141,7 @@ class IngredientRecipe(models.Model):
                 f'{self.amount} {self.ingredient.measurement_unit}')
 
 
-class FavCartBaseModel(models.Model):
+class UserRecipeBaseModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              verbose_name='Пользователь')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
@@ -155,25 +155,21 @@ class FavCartBaseModel(models.Model):
         ]
         ordering = ('recipe',)
 
+    def __str__(self):
+        return f'"{self.recipe}" добавлен пользователем {self.user}'
 
-class Favorite(FavCartBaseModel):
 
-    class Meta:
+class Favorite(UserRecipeBaseModel):
+
+    class Meta(UserRecipeBaseModel.Meta):
         default_related_name = 'favorites'
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
 
-    def __str__(self):
-        return f'Рецепт "{self.recipe}" добавлен в избранное.'
 
+class ShoppingCart(UserRecipeBaseModel):
 
-class ShoppingCart(FavCartBaseModel):
-
-    class Meta:
+    class Meta(UserRecipeBaseModel.Meta):
         default_related_name = 'shopping_cart'
         verbose_name = 'Рецепт в корзине'
         verbose_name_plural = 'Рецепты в корзине'
-
-    def __str__(self):
-        return (f'Ингредиенты рецепта "{self.recipe}" '
-                f'добавлены в список покупок.')

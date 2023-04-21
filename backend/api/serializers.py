@@ -200,27 +200,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         return data
 
 
-class FollowSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Follow
-        fields = '__all__'
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Follow.objects.all(),
-                fields=('user', 'author')
-            )
-        ]
-
-    def validate(self, data):
-        if self.context['request'].user == data['author']:
-            raise serializers.ValidationError('Нельзя подписываться на себя')
-        return data
-
-    def to_representation(self, instance):
-        return FollowListSerializer(instance).data
-
-
 class FollowListSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField(read_only=True)
     recipes_count = serializers.SerializerMethodField(read_only=True)
@@ -242,3 +221,24 @@ class FollowListSerializer(UserSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
+
+
+class FollowSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Follow
+        fields = '__all__'
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=('user', 'author')
+            )
+        ]
+
+    def validate(self, data):
+        if self.context['request'].user == data['author']:
+            raise serializers.ValidationError('Нельзя подписываться на себя')
+        return data
+
+    def to_representation(self, instance):
+        return FollowListSerializer(instance).data
