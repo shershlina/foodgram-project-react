@@ -150,13 +150,15 @@ class UserRecipeBaseModel(models.Model):
     class Meta:
         abstract = True
         constraints = [
-            UniqueConstraint(name='only_unique_recipe_in_%(class)',
-                             fields=['user', 'recipe'])
+            UniqueConstraint(
+                name='only_unique_recipe_in_%(app_label)s_%(class)s',
+                fields=['user', 'recipe']
+            )
         ]
         ordering = ('recipe',)
 
     def __str__(self):
-        return f'"{self.recipe}" добавлен пользователем {self.user}'
+        return f' Рецепт {self.recipe} добавлен пользователем {self.user}.'
 
 
 class Favorite(UserRecipeBaseModel):

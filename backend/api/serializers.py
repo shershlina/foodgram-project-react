@@ -18,9 +18,8 @@ class UserSerializer(CustomUserSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
-        if not request:
-            return False
-        return obj.following.filter(user=request.user).exists()
+        return (request and request.user.is_authenticated
+                and obj.following.filter(user=request.user).exists())
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -35,8 +34,8 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 
-class IngredientRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+class IngredientRecipeReadSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -44,15 +43,22 @@ class IngredientRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = IngredientRecipe
-        fields = ('id', 'name', 'measurement_unit', 'amount')
+        fields = ('id', 'name', 'amount', 'measurement_unit')
+
+
+class IngredientRecipeCreateSerializer(serializers.ModelSerializer):
+    id = serializers.SlugRelatedField(queryset=Ingredient.objects.all(),
+                                      slug_field='id')
+    amount = serializers.IntegerField(write_only=True, min_value=1)
+
+    class Meta:
+        model = IngredientRecipe
+        fields = ('id', 'amount')
 
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
-    ingredients = IngredientRecipeSerializer(
-        many=True,
-        source='recipe_ingredients'
-    )
+    ingredients = serializers.SerializerMethodField()
     author = UserSerializer(read_only=True)
     image = Base64ImageField(max_length=None)
     is_favorited = serializers.SerializerMethodField()
@@ -63,20 +69,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_ingredients(self, obj):
-        ingredients = IngredientRecipe.objects.filter(recipe=obj)
-        return IngredientRecipeSerializer(ingredients, many=True).data
+        ingredients = IngredientRecipe.objects.filter(recipe=obj).all()
+        return IngredientRecipeReadSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if not request:
-            return False
-        return obj.favorites.filter(user=request.user).exists()
+        return (request and request.user.is_authenticated
+                and obj.favorites.filter(user=request.user).exists())
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if not request:
-            return False
-        return obj.shopping_cart.filter(user=request.user).exists()
+        return (request and request.user.is_authenticated
+                and obj.shopping_cart.filter(user=request.user).exists())
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -84,7 +88,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    ingredients = IngredientRecipeSerializer(many=True)
+    ingredients = IngredientRecipeCreateSerializer(many=True)
     author = UserSerializer(read_only=True)
     image = Base64ImageField(max_length=None)
     cooking_time = serializers.IntegerField()
@@ -116,10 +120,10 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Нужно выбрать хотя бы один ингредиент')
         for ingredient in ingredients:
-            if ingredient['id'] in ingredients_list:
+            if ingredient in ingredients_list:
                 raise serializers.ValidationError(
                     'Ингредиенты в рецепте не могут повторяться')
-            ingredients_list.append(ingredient['id'])
+            ingredients_list.append(ingredient)
             if int(ingredient.get('amount')) < 1:
                 raise serializers.ValidationError(
                     'Укажите верное кол-во ингредиента')
