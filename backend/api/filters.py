@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django_filters.rest_framework import filters, FilterSet
+from django_filters.rest_framework import FilterSet, filters
 
 from recipes.models import Ingredient, Recipe, Tag
 
@@ -12,8 +12,7 @@ class IngredientFilter(FilterSet):
         fields = ('name',)
 
     def filter_by_name(self, queryset, name, value):
-        queryset = queryset.filter(Q(name__istartswith=value))
-        return queryset
+        return queryset.filter(Q(name__istartswith=value))
 
 
 class RecipeFilter(FilterSet):

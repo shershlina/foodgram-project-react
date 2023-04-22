@@ -8,16 +8,17 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from recipes.models import (Favorite, Ingredient, Recipe, IngredientRecipe,
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                             ShoppingCart, Tag)
 from users.models import Follow, User
+
 from .filters import IngredientFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (TagSerializer, IngredientSerializer,
+from .serializers import (FavoriteSerializer, FollowListSerializer,
+                          FollowSerializer, IngredientSerializer,
                           RecipeReadSerializer, RecipeWriteSerializer,
-                          FavoriteSerializer, ShoppingCartSerializer,
-                          FollowSerializer, FollowListSerializer,
+                          ShoppingCartSerializer, TagSerializer,
                           UserSerializer)
 
 
