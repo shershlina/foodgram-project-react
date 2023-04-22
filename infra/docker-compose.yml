@@ -6,10 +6,10 @@ services:
     volumes:
       - db_value:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
-  web:
-    image: shershlina/foodgram_backend
+  backend:
+    build: ../backend
     restart: always
     volumes:
       - static_value:/app/static/
@@ -17,10 +17,10 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
   frontend:
-    image: shershlina/foodgram_frontend
+    build: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:

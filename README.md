@@ -1,3 +1,4 @@
+![example workflow](https://github.com/shershlina/foodgram_project_react/actions/workflows/foodgram_workflow.yml/badge.svg?event=push)
 # foodgram
 Project that allow you making your own cooking book and share it with community.
 
