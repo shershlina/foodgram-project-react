@@ -93,6 +93,10 @@ docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py createsuperuser
 docker-compose exec backend python manage.py collectstatic --no-input 
 ```
+If you want to add some ingredients and tags data:
+```
+docker-compose exec web python manage.py import_csv
+```
 
 Now you can visit webpage of project with your superuser on the http://localhost/admin/
 API documentation and examples you can find at http://localhost/api/docs/redoc.html
