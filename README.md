@@ -5,6 +5,8 @@ You can register on the site, creating recipes, add any recipe to favorite, you 
 any author on the website. Also, you can add ingredients from recipes to the shopping cart
 and download the shopping list.
 
+Right now available at shershon.hopto.org
+
 ### Technologies:
 ![Django](https://img.shields.io/badge/django-3.2-%23092E20.svg?style=plastic&logo=django&logoColor=white)
 ![DjangoREST](https://img.shields.io/badge/DjangoREST-ff1709?style=plastic&logo=django&logoColor=white&color=ff1709&labelColor=gray)
