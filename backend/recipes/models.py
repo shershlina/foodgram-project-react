@@ -55,9 +55,10 @@ class Recipe(models.Model):
                                          through='IngredientRecipe',
                                          related_name='recipes',
                                          verbose_name='Ингредиент')
-    author = models.ForeignKey(User, on_delete=models.CASCADE,
+    author = models.ForeignKey(User, on_delete=models.SET_DEFAULT,
                                related_name='recipes',
-                               verbose_name='Автор')
+                               verbose_name='Автор',
+                               default='Автор неизвестен', null=True)
     name = models.CharField(verbose_name='Название',
                             max_length=settings.CHAR_LENGTH)
     image = models.ImageField(verbose_name='Изображение',
